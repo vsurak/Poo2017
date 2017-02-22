@@ -28,6 +28,12 @@ public class Program
 		// dado que ambas variables apuntan al mismo espacio de memoria veo el mismo valor
 		System.out.println("Volumen Radio1: "+radio1.getVolumen());
 		System.out.println("Volumen Radio2: "+radio2.getVolumen());
+		
+		System.out.println("-----------------------------------");
+		Radio radio4 = new Radio();
+		Radio radio5 = new Radio((short)60, 206.8f);
+		System.out.println("Frecuencia radio4: "+radio4.getFrecuencia());
+		System.out.println("Frecuencia radio5: "+radio5.getFrecuencia());
 
 	}
 }

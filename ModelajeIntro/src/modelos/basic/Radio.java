@@ -3,22 +3,41 @@ package modelos.basic;
 public class Radio 
 {
 	private short Volumen;
-	private short Frecuencia;
+	private float Frecuencia;
 	
+	public Radio() // constructor sin parametros
+	{
+		Volumen = 20;
+		Frecuencia = 104.7f;
+	}
+	
+	public Radio(short pVolumen, float pFrecuencia) // :) :) :) 
+	{
+		setVolumen(pVolumen);
+		setFrecuencia(pFrecuencia);
+	}
+	
+	public Radio(float freq, short pVol) // asignar directo los atributos esta bien, pero a futuro puede ser mas estrategico utilizar los getters y setters
+	{
+		Volumen=pVol;
+		Frecuencia = freq;
+	}
 	
 	public short getVolumen() {
 		return Volumen;
 	}
 	
-	public void setVolumen(short volumen) {
+	public void setVolumen(short volumen) 
+	{
 		Volumen = volumen;
+		// lllamar a un objeto que efectivamente le sube le cambia el volumen al speaker
 	}
 	
-	public short getFrecuencia() {
+	public float getFrecuencia() {
 		return Frecuencia;
 	}
 	
-	public void setFrecuencia(short frecuencia) {
+	public void setFrecuencia(float frecuencia) {
 		Frecuencia = frecuencia;
 	}
 	
