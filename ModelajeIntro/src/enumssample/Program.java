@@ -1,8 +1,6 @@
-package slot.program;
+package enumssample;
 
-import slot.library.Animals;
-
-public class SlotProgram 
+public class Program 
 {
 	public static void main(String args[])
 	{

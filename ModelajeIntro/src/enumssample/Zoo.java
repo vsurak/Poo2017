@@ -1,4 +1,4 @@
-package slot.library;
+package enumssample;
 
 public class Zoo 
 {
