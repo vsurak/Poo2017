@@ -11,6 +11,7 @@ public class SlotMachine
 	private final int MAX_AMOUNT_OF_CREDITS = 2000;
 	private final int CANTIDAD_DE_REELS = 3;
 	private final int CANTIDAD_FIGURAS_POR_REEL = 20;
+	private final int MAX_CREDITS_TO_PLAY = 3;
 	
 	private int Creditos;
 	private int CreditosPaid;
@@ -35,7 +36,7 @@ public class SlotMachine
 	/*
 	 * Constructor
 	 */
-	public SlotMachine(int pCreditsPerPlayer)
+	public SlotMachine()
 	{
 		this.Creditos = MAX_AMOUNT_OF_CREDITS;
 		this.CreditosPaid=0;
@@ -57,23 +58,28 @@ public class SlotMachine
 		{
 			Payline[reelGirando] = Reels[reelGirando].girar();
 		}
+		System.out.println(Payline[0].getFigura()+" "+Payline[1].getFigura()+" "+Payline[2].getFigura());
 	}
 	
 	public void calcularCreditos()
 	{
-		int factorWining = TablaPagos.calcularPago(Payline, (short)CreditosPlayed);
+		CreditosPaid = TablaPagos.calcularPago(Payline, (short)CreditosPlayed);
 		Creditos = Creditos - CreditosPlayed;
-		Creditos = Creditos + CreditosPlayed * factorWining;
+		Creditos = Creditos + CreditosPaid;
 		
 		System.out.println("Creditos: "+Creditos + 
 						   " Creditos Jugados: "+ CreditosPlayed+
-						   " Ganado: "+	CreditosPlayed * factorWining);
+						   " Ganado: "+	CreditosPaid);
+	}
+	
+	public void setCreditosToPlay(int pAmout)
+	{
+		CreditosPlayed=pAmout;
 	}
 	
 	/*
 	 * Metodos privados
 	 */
-	
 	
 	private void crearReels()
 	{
@@ -88,7 +94,7 @@ public class SlotMachine
 			for(int cuentaFiguras=0; cuentaFiguras<CANTIDAD_FIGURAS_POR_REEL; cuentaFiguras++)
 			{
 				// escojo una figura aleatoria de la lista, uso la posicion del arreglo como el Id
-				int id = rand.nextInt(ListaFiguras.length);
+				int id = rand.nextInt(ListaFiguras.length); // sumo 1 para no seleccionar el primer elemento de la lista de figuras
 				
 				// creo el simbolo
 				Simbolo nuevo = new Simbolo(id,ListaFiguras[id]);
