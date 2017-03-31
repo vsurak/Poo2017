@@ -3,6 +3,7 @@ package temasproyecto.paqueteSonido;
 //Librerías
 
 import java.io.*;
+
 import sun.audio.*;
 public class playSonido {
 
@@ -20,9 +21,9 @@ public class playSonido {
         
         //Crea un archivo de tipo AudioStream para sonidos.
         
-        AudioStream audio = new AudioStream(in);
+       // AudioStream audio = new AudioStream(in);
         
         //Llama el método para reproducir sonido.
-        AudioPlayer.player.start(audio);
+        //AudioPlayer.player.start(audio);
     }
 }
