@@ -13,6 +13,6 @@ public class Puerta extends Observable
 	{
 		System.out.println("Abriendo la puerta");
 		setChanged();
-		this.notifyObservers();
+		this.notifyObservers(null);
 	}
 }
