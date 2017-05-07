@@ -27,40 +27,23 @@ public class MSClient implements IConstants
 	{
 		// puedo tener el URL hardcoded y aqui armo el PayLoad
 		String payload = POST_BODY.replace("@@URL@@", pURLVideo);
-		String ResponseResult = HttpRequestor.post(MCS_URL, payload);
-		
-		int posStart = ResponseResult.indexOf(CAMBIO_LINEA);
-		
-		String location="", key="";
-		
-		while (posStart>0) {
-			String line = ResponseResult.substring(0, posStart);
-			if (line.contains(LOCATION_RESULT_URL_KEY)){
-				location = line.substring(line.indexOf(":")+2, line.length());
-			}
-			
-			if (line.contains(LOCATION_RESULT_ACCESS_KEY)){
-				key = line.substring(line.indexOf(":")+2, line.length());
-				break;
-			}
-			
-			ResponseResult = ResponseResult.substring(line.length(),ResponseResult.length());
-			posStart = ResponseResult.indexOf(CAMBIO_LINEA);
+		VideoResponse videoResp = HttpRequestor.post(MCS_URL, payload, MCS_IDKEY, MCS_IDKEY);
+		if (videoResp!=null)
+		{
+			VideosPendientes.add(videoResp);
 		}
-		VideoResponse video = new VideoResponse(location, key);
-		VideosPendientes.add(video);
 	}
 	
 	public void procesarRespuestaVideo(VideoResponse videoResponse)
 	{
-		String payload = RESPONSE_BODY.replace("@@KEY@@", videoResponse.getVideoKey());
-		String JsonResult = HttpRequestor.post(videoResponse.getVideoResponseURL(), payload);
-		cargarCuerpos(JsonResult);
+		VideoResponse videoConJson = HttpRequestor.post(videoResponse.getVideoResponseURL(), "", MCS_IDKEY, videoResponse.getVideoKey());
+		videoResponse.setContent(videoConJson.getContent());
+		cargarCuerpos(videoResponse);
 	}
 	
 	
 	
-	private void cargarCuerpos(String pJsonResultado)
+	private void cargarCuerpos(VideoResponse videoResponse)
 	{
 		// aqui proceso el Json creando los objetos Cuerpo que vienen
 		// en el Json y los meto uno a uno en la lista de Cuerpos

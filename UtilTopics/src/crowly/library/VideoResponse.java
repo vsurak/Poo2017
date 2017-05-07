@@ -3,12 +3,14 @@ package crowly.library;
 public class VideoResponse {
 	private String VideoResponseURL;
 	private String VideoKey;
+	private String Content;
 	private boolean Procesado;
 	
-	public VideoResponse(String pURL, String pKey)
+	public VideoResponse(String pURL, String pKey, String pContent)
 	{
 		VideoResponseURL = pURL;
 		VideoKey = pKey;
+		Content = pContent;
 		Procesado = false;
 	}
 
@@ -34,6 +36,14 @@ public class VideoResponse {
 
 	public void setProcesado(boolean procesado) {
 		Procesado = procesado;
+	}
+
+	public String getContent() {
+		return Content;
+	}
+
+	public void setContent(String content) {
+		Content = content;
 	}
 	
 	

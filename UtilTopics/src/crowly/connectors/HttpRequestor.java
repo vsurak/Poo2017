@@ -1,63 +1,63 @@
 package crowly.connectors;
 
-import java.io.BufferedReader;
-import java.io.DataOutputStream;
-import java.io.InputStreamReader;
-import java.net.URL;
+import java.net.URI;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.utils.URIBuilder;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
 
-import javax.net.ssl.HttpsURLConnection;
+import crowly.library.IConstants;
+import crowly.library.VideoResponse;
 
-public class HttpRequestor 
+public class HttpRequestor implements IConstants
 {
 
-	public static String post(String pUrl, String pPayload)
+	public static VideoResponse post(String pUrl, String pPayload, String pMSKey, String pResponseKey)
 	{
-		String result = "";
+		VideoResponse result = null;
 		
-		try 
-		{
-			URL obj = new URL(pUrl);
-			HttpsURLConnection con = (HttpsURLConnection) obj.openConnection();
-	
-			//add reuqest header
-			con.setRequestMethod("POST");
-			con.setRequestProperty("User-Agent", "MOZILLA/5.0");
-			con.setRequestProperty("Accept-Language", "en-US,en;q=0.5");
-	
-			// Send post request
-			con.setDoOutput(true);
-			DataOutputStream wr = new DataOutputStream(con.getOutputStream());
-			wr.writeBytes(pPayload);
-			wr.flush();
-			wr.close();
-	
-			int responseCode = con.getResponseCode();
-	
-			BufferedReader in = new BufferedReader(
-			        new InputStreamReader(con.getInputStream()));
-			String inputLine;
-			StringBuffer response = new StringBuffer();
-	
-			while ((inputLine = in.readLine()) != null) {
-				response.append(inputLine);
-			}
-			in.close();
-		} catch (Exception ex)
-		{
-			ex.printStackTrace();
-		}
-		//print result
+		HttpClient httpclient = HttpClients.createDefault();
+        try
+        {
+            URIBuilder builder = new URIBuilder(pUrl);
+
+            /*
+            builder.setParameter("sensitivityLevel", "{string}");
+            builder.setParameter("frameSamplingValue", "{number}");
+            builder.setParameter("detectionZones", "{string}");
+            builder.setParameter("detectLightChange", "{boolean}");
+            builder.setParameter("mergeTimeThreshold", "{number}");
+            */
+            
+            URI uri = builder.build();
+            HttpPost request = new HttpPost(uri);
+            request.setHeader("Content-Type", "application/json");
+            request.setHeader("Ocp-Apim-Subscription-Key", pMSKey);
+            request.setHeader("apim-request-id", pResponseKey);
+
+            // Request body
+            StringEntity reqEntity = new StringEntity(pPayload);
+            request.setEntity(reqEntity);
+
+            HttpResponse response = httpclient.execute(request);
+            HttpEntity entity = response.getEntity();
+                                                
+            if (entity != null) 
+            {
+                String location = response.getHeaders(LOCATION_RESULT_URL_KEY).length>0?response.getHeaders(LOCATION_RESULT_URL_KEY)[0].getValue() : "";
+                String key = response.getHeaders(LOCATION_RESULT_URL_KEY).length>0?response.getHeaders(LOCATION_RESULT_ACCESS_KEY)[0].getValue() : "";            	
+                System.out.println(EntityUtils.toString(entity));
+                result = new VideoResponse(location, key, EntityUtils.toString(entity));
+            }
+        }
+        catch (Exception e)
+        {
+            System.out.println(e.getMessage());
+        }
 		return result;
-	}
-	
-	public static void main(String args[])
-	{
-		String postMessage = "HTTP/1.1 "+
-			"Content-Type: application/json\n"+
-			"Host: westus.api.cognitive.microsoft.com\n"+
-			"Ocp-Apim-Subscription-Key: 799dca11f3ca4e67b75c9aa34848823b\n"+
-			"{ \"url\":\"http://www.example.com/sample.mp4\" } ";
-		String url = "https://westus.api.cognitive.microsoft.com/video/v1.0/detectmotion?sensitivityLevel=low&frameSamplingValue=1";
-		System.out.println(HttpRequestor.post(url, postMessage));
 	}
 }
