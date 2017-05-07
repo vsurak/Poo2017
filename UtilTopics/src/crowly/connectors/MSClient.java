@@ -27,7 +27,7 @@ public class MSClient implements IConstants
 	{
 		// puedo tener el URL hardcoded y aqui armo el PayLoad
 		String payload = POST_BODY.replace("@@URL@@", pURLVideo);
-		VideoResponse videoResp = HttpRequestor.post(MCS_URL, payload, MCS_IDKEY, MCS_IDKEY);
+		VideoResponse videoResp = HttpRequestor.post(MCS_URL, payload, MCS_IDKEY);
 		if (videoResp!=null)
 		{
 			VideosPendientes.add(videoResp);
@@ -36,13 +36,9 @@ public class MSClient implements IConstants
 	
 	public void procesarRespuestaVideo(VideoResponse videoResponse)
 	{
-		VideoResponse videoConJson = HttpRequestor.post(videoResponse.getVideoResponseURL(), "", MCS_IDKEY, videoResponse.getVideoKey());
-		videoResponse.setContent(videoConJson.getContent());
-		cargarCuerpos(videoResponse);
+		HttpRequestor.get(videoResponse, MCS_IDKEY);
 	}
-	
-	
-	
+		
 	private void cargarCuerpos(VideoResponse videoResponse)
 	{
 		// aqui proceso el Json creando los objetos Cuerpo que vienen

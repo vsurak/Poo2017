@@ -26,7 +26,7 @@ public class VideoProcesor implements IConstants
 				Thread.sleep(ESPERA_ENTRE_LLAMADAS);
 			}
 			
-			Thread.sleep(1200000);
+			Thread.sleep(60000);
 			
 			for(VideoResponse video : MsClient.getVideosPendientes()) {
 				MsClient.procesarRespuestaVideo(video);

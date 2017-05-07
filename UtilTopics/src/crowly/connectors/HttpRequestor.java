@@ -4,6 +4,7 @@ import java.net.URI;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.entity.StringEntity;
@@ -16,7 +17,7 @@ import crowly.library.VideoResponse;
 public class HttpRequestor implements IConstants
 {
 
-	public static VideoResponse post(String pUrl, String pPayload, String pMSKey, String pResponseKey)
+	public static VideoResponse post(String pUrl, String pPayload, String pMSKey)
 	{
 		VideoResponse result = null;
 		
@@ -37,7 +38,6 @@ public class HttpRequestor implements IConstants
             HttpPost request = new HttpPost(uri);
             request.setHeader("Content-Type", "application/json");
             request.setHeader("Ocp-Apim-Subscription-Key", pMSKey);
-            request.setHeader("apim-request-id", pResponseKey);
 
             // Request body
             StringEntity reqEntity = new StringEntity(pPayload);
@@ -50,7 +50,6 @@ public class HttpRequestor implements IConstants
             {
                 String location = response.getHeaders(LOCATION_RESULT_URL_KEY).length>0?response.getHeaders(LOCATION_RESULT_URL_KEY)[0].getValue() : "";
                 String key = response.getHeaders(LOCATION_RESULT_URL_KEY).length>0?response.getHeaders(LOCATION_RESULT_ACCESS_KEY)[0].getValue() : "";            	
-                System.out.println(EntityUtils.toString(entity));
                 result = new VideoResponse(location, key, EntityUtils.toString(entity));
             }
         }
@@ -60,4 +59,33 @@ public class HttpRequestor implements IConstants
         }
 		return result;
 	}
+	
+	public static VideoResponse get(VideoResponse pVideoResponse, String pMSKey)
+	{
+		
+		HttpClient httpclient = HttpClients.createDefault();
+        try
+        {
+            URIBuilder builder = new URIBuilder(pVideoResponse.getVideoResponseURL());
+
+            URI uri = builder.build();
+            HttpGet request = new HttpGet(uri);
+            request.setHeader("Content-Type", "application/json");
+            request.setHeader("Ocp-Apim-Subscription-Key", pMSKey);
+
+            HttpResponse response = httpclient.execute(request);
+            HttpEntity entity = response.getEntity();
+                                                
+            if (entity != null) 
+            {
+                pVideoResponse.setContent(EntityUtils.toString(entity));
+            }
+        }
+        catch (Exception e)
+        {
+            System.out.println(e.getMessage());
+        }
+		return pVideoResponse;
+	}
+	
 }
